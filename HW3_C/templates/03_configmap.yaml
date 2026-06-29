@@ -1,0 +1,14 @@
+# Starter ConfigMap for HW3_C
+# Replace <username> with your actual username
+#
+# Read by the main container via env vars (envFrom or valueFrom configMapKeyRef).
+# To rotate (Task 3b), patch this and `kubectl rollout restart deployment embedder`.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: qbc12-hw03-c-<username>   # TODO: your namespace
+data:
+  log_level: "INFO"
+  threshold: "0.5"

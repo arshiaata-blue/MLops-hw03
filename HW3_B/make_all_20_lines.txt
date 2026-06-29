@@ -1,0 +1,16 @@
+tests/test_search.py::test_search_basic SKIPPED (bundle ...) [ 73%]
+tests/test_search.py::test_search_excludes_neutral_by_default SKIPPED [ 80%]
+tests/test_search.py::test_search_with_primary_filter SKIPPED [ 86%]
+tests/test_search.py::test_search_top_k_bounds PASSED        [ 93%]
+tests/test_search.py::test_search_rejects_unknown_field PASSED [100%]
+
+======================== warnings summary =========================
+tests/test_health.py::test_health_payload_shape
+  C:\Arshia\AI\MLOps_Bootcamp\.venv\Lib\site-packages\qdrant_client\qdrant_remote.py:290: UserWarning: Failed to obtain server version.Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+    show_warning(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============= 9 passed, 6 skipped, 1 warning in 6.11s =============
+(.venv) 
+arshi@Arshia MINGW64 /c/Arshia/AI/MLOps_Bootcamp/homework/hw03/HW3_Student/HW3_Student/HW3_B
+$

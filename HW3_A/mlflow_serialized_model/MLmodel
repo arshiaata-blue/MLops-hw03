@@ -1,0 +1,33 @@
+flavors:
+  python_function:
+    config:
+      task: llm/v1/embeddings
+    data: model.sentence_transformer
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sentence_transformers
+    python_version: 3.12.0
+  sentence_transformers:
+    code: null
+    pipeline_model_type: BertModel
+    sentence_transformers_version: 5.5.1
+    source_model_name: C:\Arshia\AI\MLOps_Bootcamp\homework\hw03\HW3_Student\HW3_Student\HW3_A\bundle\model
+is_signature_from_type_hint: false
+metadata:
+  task: llm/v1/embeddings
+mlflow_version: 2.20.3
+model_size_bytes: 91581966
+model_uuid: 9f7317ff22664b6aaf8df4625407b787
+signature:
+  inputs: '[{"type": "string", "name": "input", "required": true}]'
+  outputs: '[{"type": "string", "name": "object", "required": true}, {"type": "array",
+    "items": {"type": "object", "properties": {"embedding": {"type": "array", "items":
+    {"type": "double"}, "required": true}, "index": {"type": "long", "required": true},
+    "object": {"type": "string", "required": true}}}, "name": "data", "required":
+    true}, {"type": "object", "properties": {"prompt_tokens": {"type": "long", "required":
+    true}, "total_tokens": {"type": "long", "required": true}}, "name": "usage", "required":
+    true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-06-12 05:49:40.381711'

@@ -1,0 +1,6 @@
+{
+  "query": "I am so happy right now",
+  "top_k": 5,
+  "lang": "en",
+  "exclude_neutral": true
+}

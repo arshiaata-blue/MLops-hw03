@@ -1,0 +1,124 @@
+# Starter Deployment for HW3_C
+# Replace <username> with your actual username (e.g., nazanin_hesari)
+# Replace <your-nodeport> with the value from your node-port.txt (e.g., 30090)
+#
+# This is a MINIMAL starter — Task 1 requires:
+# - init container (mc + curl to fetch bundle + model)
+# - 3 distinct probes (startup + liveness + readiness)
+# - state.loaded flag in app (handled in HW3_B code, not here)
+# - securityContext (non-root, read-only root FS)
+# - resources requests AND limits
+#
+# Read HW3_06 §1 Task 1 for the FULL manifest with all the bells and whistles.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: embedder
+  namespace: qbc12-hw03-c-<username>     # TODO: your namespace
+  labels: {app: embedder, version: v1}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: embedder}}
+  template:
+    metadata: {labels: {app: embedder, version: v1}}
+    spec:
+      # TODO Task 1: Add initContainers (fetch bundle from MinIO + extract).
+      #
+      # CRITICAL: Use the local registry init image, NOT minio/mc:latest from docker.io.
+      # - Reason 1: k3s in Iran CANNOT pull from docker.io directly (HTTP 403 on blobs).
+      # - Reason 2: The pure minio/mc image is built FROM scratch and has NO `tar` binary.
+      #             Your init script must extract a tar.gz bundle, so you need tar.
+      # The instructor pre-pushes a custom init-bundle:v1 image that includes BOTH
+      # `mc` (the MinIO client) AND `tar` (GNU tar from Alpine).
+      # The image is at 185.50.38.163:35000/init-bundle:v1, built from
+      #   FROM 185.50.38.163:35000/minio/mc:latest AS mc-src
+      #   FROM alpine:3.19
+      #   RUN apk add --no-cache tar
+      #   COPY --from=mc-src /usr/bin/mc /usr/local/bin/mc
+      # See HW3_06_hw3_c_k8s.md §1.4 for the full Dockerfile.
+      # initContainers:
+      # - name: bundle-pull
+      #   image: 185.50.38.163:35000/init-bundle:v1
+      #   command: ["/bin/sh", "-c"]
+      #   args:
+      #   - |
+      #     set -e
+      #     mc alias set myminio http://185.50.38.163:33333 "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"
+      #     mkdir -p /bundle
+      #     mc cp myminio/hw03-bundles/<username>/hw03_bundle_v1.tar.gz /tmp/bundle.tar.gz
+      #     tar -xzf /tmp/bundle.tar.gz -C /bundle/
+      #     ls -la /bundle/model/ | head
+      #     echo "[bundle-pull] done"
+      #   env:
+      #   - {name: MINIO_ACCESS_KEY, valueFrom: {secretKeyRef: {name: app-credentials, key: minio-access-key}}}
+      #   - {name: MINIO_SECRET_KEY, valueFrom: {secretKeyRef: {name: app-credentials, key: minio-secret-key}}}
+      #   resources:
+      #     requests: {cpu: 50m, memory: 64Mi}
+      #     limits:   {cpu: 200m, memory: 256Mi}
+      #   volumeMounts:
+      #   - {name: bundle, mountPath: /bundle}
+
+      containers:
+      - name: api
+        # TODO Task 1: Update image to use the registry
+        # image: 185.50.38.163:35000/qbc12-embedder-<username>:v1
+        image: qbc12-embedder-<username>:v1
+        # TODO Task 1: Use Always pull policy (k3s pulls from the registry)
+        # imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
+        ports: [{name: http, containerPort: 8000}]
+
+        # TODO Task 1: Add 3 distinct probes (startup + liveness + readiness)
+        # startupProbe:
+        #   httpGet: {path: /healthz/live, port: http}
+        #   initialDelaySeconds: 0
+        #   periodSeconds: 5
+        #   failureThreshold: 24
+        # livenessProbe:
+        #   httpGet: {path: /healthz/live, port: http}
+        #   periodSeconds: 10
+        #   timeoutSeconds: 3
+        #   failureThreshold: 3
+        # readinessProbe:
+        #   httpGet: {path: /healthz/ready, port: http}
+        #   periodSeconds: 5
+        #   timeoutSeconds: 3
+        #   failureThreshold: 2
+
+        # TODO Task 1: Add resources (requests AND limits)
+        # resources:
+        #   requests: {cpu: 250m, memory: 512Mi}
+        #   limits:   {cpu: 500m, memory: 1Gi}
+
+        # TODO Task 1: Add securityContext (non-root)
+        # securityContext:
+        #   runAsUser: 10001
+        #   readOnlyRootFilesystem: true
+        #   allowPrivilegeEscalation: false
+        #   capabilities: {drop: [ALL]}
+        # (NOTE: do NOT use runAsNonRoot — k3s rejects it with non-numeric USER app)
+
+        env:
+        - {name: MODEL_SOURCE, value: "local"}
+        - {name: BUNDLE_DIR,  value: "/bundle"}
+        - {name: QDRANT_URL,  value: "http://185.50.38.163:6333"}
+        - {name: QDRANT_COLLECTION, value: "qbc12_corpus"}
+        - {name: OMP_NUM_THREADS, value: "2"}
+
+        # TODO Task 1: Add volumeMounts for the bundle (from init container)
+        # volumeMounts:
+        # - {name: bundle, mountPath: /bundle, readOnly: true}
+
+      # TODO Task 1: Add volumes (emptyDir for bundle)
+      # volumes:
+      # - name: bundle
+      #   emptyDir: {sizeLimit: 500Mi}
+
+      # TODO Task 7: Add preStop hook
+      # containers:
+      # - name: api
+      #   lifecycle:
+      #     preStop:
+      #       exec:
+      #         command: ["/bin/sh", "-c", "sleep 10"]

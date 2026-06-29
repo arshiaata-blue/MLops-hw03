@@ -1,0 +1,21 @@
+# HW3_B runtime — installed inside the container at /usr/local
+# Versions match HW3_A/bundle/requirements.txt exactly (parity is mandatory).
+#
+# NOTE: `datasets`, `huggingface-hub`, `pytest`, and `httpx` are NOT in the
+# runtime image. See `requirements-dev.txt` for those.
+#   - `datasets` + `huggingface-hub` are only used by the bonus reindex CLI
+#     (app/reindex.py), and only with a JSON file the instructor pre-stages.
+#     The instructor-side indexer (HW3_instructor_scripts/indexer.py) does the
+#     HF download + dataset preparation in a sidecar container.
+#   - `pytest` is a dev dep.
+#   - `httpx` is only used by tests.
+
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+numpy==1.26.4
+python-dotenv==1.0.1
+psycopg[binary]==3.2.3
+qdrant-client==1.12.1
+minio==7.2.12
+requests==2.32.3

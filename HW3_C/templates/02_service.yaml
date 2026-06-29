@@ -1,0 +1,23 @@
+# Starter Service for HW3_C
+# Replace <username> with your actual username
+# Replace <your-nodeport> with the value from your node-port.txt (e.g., 30090)
+#
+# MUST be type: NodePort (not ClusterIP) so the grader can hit your service
+# from outside the cluster via http://185.50.38.163:<your-nodeport>
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: embedder
+  namespace: qbc12-hw03-c-<username>
+  labels: {app: embedder}
+spec:
+  type: NodePort
+  selector:
+    app: embedder
+  ports:
+  - name: http
+    port: 80                  # in-cluster port
+    targetPort: http          # matches containerPorts[].name
+    nodePort: <your-nodeport> # TODO: your assigned port from node-port.txt
+    protocol: TCP

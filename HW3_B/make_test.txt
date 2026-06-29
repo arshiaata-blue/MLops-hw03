@@ -1,0 +1,7 @@
+======================== warnings summary =========================
+tests/test_health.py::test_health_payload_shape
+  C:\Arshia\AI\MLOps_Bootcamp\.venv\Lib\site-packages\qdrant_client\qdrant_remote.py:290: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+    show_warning(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============= 9 passed, 6 skipped, 1 warning in 8.43s =============

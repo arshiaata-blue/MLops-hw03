@@ -1,0 +1,34 @@
+# Starter HPA for HW3_C
+# Replace <username> with your actual username
+#
+# Task 5: load test triggers scale-up to 2-3 replicas; scales back down after stabilization
+# HPA reads CPU from cAdvisor (via metrics-server) every 15s.
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: embedder-hpa
+  namespace: qbc12-hw03-c-<username>   # TODO: your namespace
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: embedder
+  minReplicas: 1
+  maxReplicas: 3      # NOT 10 — cluster math requires <= 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30

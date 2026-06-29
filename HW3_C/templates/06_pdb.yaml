@@ -1,0 +1,18 @@
+# Starter PodDisruptionBudget for HW3_C
+# Replace <username> with your actual username
+#
+# Task 6: PDB with minAvailable: 2; `kubectl drain --dry-run=server` should report
+# "would violate disruption budget".
+#
+# This PDB is only meaningful when you have 3 replicas. Scale to 3 first.
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: embedder-pdb
+  namespace: qbc12-hw03-c-<username>   # TODO: your namespace
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: embedder
